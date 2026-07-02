@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Landing page de HP Sprocket inspirada en el diseño de Figma: imprimí tus fotos favoritas al instante, dondequiera que estés."
+    />
+    <title>HP Sprocket | Tus recuerdos fuera de la nube</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css?v=76" />
+    <script src="js/main.js?v=76" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <div class="nav-bar">
+          <a href="#inicio" class="brand">
+            <img src="Assets/Logo_HP.png" alt="HP" class="brand-logo" />
+            <span>Sprocket</span>
+          </a>
+          <nav class="site-nav" id="site-nav">
+            <a href="#inicio">Inicio</a>
+            <a href="#como-funciona">Cómo funciona</a>
+            <a href="#papel">Papel</a>
+            <a href="#caracteristicas">Características</a>
+            <a href="#colores">Comunidad</a>
+          </nav>
+          <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Abrir menú" aria-controls="site-nav" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero" id="inicio">
+          <div class="hero-banner">
+            <img src="Assets/figma-hero-banner.png" alt="Amigos fotografiando un paisaje de montaña con el celular" />
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+              <p class="hero-eyebrow">HPSprocket Select</p>
+              <h1>Tus recuerdos <br />fuera de la nube.</h1>
+              <p class="hero-text">
+                Miles de fotos viven en tu celular. Las <br />
+                mejores merecen algo más que una pantalla.
+              </p>
+              <a href="#como-funciona" class="btn btn-primary">Descubrí más</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="product-strip">
+          <div class="container product-strip-inner">
+            <div class="product-shot reveal">
+              <img src="Assets/figma-impresora-destacada.png" alt="Impresora portátil HP Sprocket" />
+            </div>
+            <div class="feature-row">
+              <article class="feature-item">
+                <span class="icon-badge icon-badge-peach">
+                  <svg class="drop-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M18.715 13.186C18.29 11.858 17.384 10.607 16 9.5c-2-1.6-3.5-4-4-6.5a10.7 10.7 0 0 1-.884 2.586" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="m2 2 20 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M8.795 8.797A11 11 0 0 1 8 9.5C6 11.1 5 13 5 15a7 7 0 0 0 13.222 3.208" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+                <h3>ZINK</h3>
+                <p>Imprimí sin cartuchos ni complicaciones.</p>
+              </article>
+              <article class="feature-item">
+                <span class="icon-badge icon-badge-yellow">
+                  <svg class="drop-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="m7 7 10 10-5 5V2l5 5L7 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+                <h3>Bluetooth</h3>
+                <p>Conexión rápida y simple desde tu celular.</p>
+              </article>
+              <article class="feature-item">
+                <span class="icon-badge icon-badge-sage">
+                  <svg class="drop-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M8 10h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M8 18h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M8 22v-6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+                <h3>Portátil</h3>
+                <p>Llevá tus recuerdos a cualquier parte, sin cables ni complicaciones.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="how-it-works" id="como-funciona">
+          <div class="container">
+            <div class="section-heading reveal">
+              <h2>La magia del momento.</h2>
+              <p>Pasá de una foto en tu celular a un recuerdo tangible en segundos</p>
+            </div>
+            <div class="step-grid reveal-group">
+              <article class="step-card reveal-item">
+                <div class="step-photo">
+                  <img src="Assets/figma-paso-01-elegi.png" alt="Eligiendo una foto para imprimir" />
+                </div>
+                <p class="step-number">01</p>
+                <h3>Elegí</h3>
+                <p>Sacá una foto o elegí una de tu galería.</p>
+              </article>
+              <article class="step-card reveal-item">
+                <div class="step-photo">
+                  <img src="Assets/figma-paso-02-edita.png" alt="Editando una foto en la app de HP Sprocket" />
+                </div>
+                <p class="step-number">02</p>
+                <h3>Editá</h3>
+                <p>Sacá una foto o elegí una de tu galería.</p>
+              </article>
+              <article class="step-card reveal-item">
+                <div class="step-photo">
+                  <img src="Assets/figma-paso-03-conecta.png" alt="Conectando el celular a la impresora por Bluetooth" />
+                </div>
+                <p class="step-number">03</p>
+                <h3>Conectá</h3>
+                <p>Sacá una foto o elegí una de tu galería.</p>
+              </article>
+              <article class="step-card reveal-item">
+                <div class="step-photo">
+                  <img src="Assets/figma-paso-04-imprimi.png" alt="Foto saliendo de la impresora HP Sprocket" />
+                </div>
+                <p class="step-number">04</p>
+                <h3>Imprimí</h3>
+                <p>Sacá una foto o elegí una de tu galería.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="paper-section" id="papel">
+          <div class="container">
+            <div class="paper-shell">
+              <div class="paper-grid">
+            <div class="paper-visual reveal">
+              <!-- TEMPORAL: 4 placeholders, a reemplazar por las imágenes que definas -->
+              <div class="polaroid-stack stack-carousel">
+                <figure class="polaroid" data-pos="0">
+                  <img src="Assets/selfi-1.png" alt="Foto 1 (placeholder, a definir)" />
+                </figure>
+                <figure class="polaroid" data-pos="1">
+                  <img src="Assets/selfi-2.png" alt="Foto 2 (placeholder, a definir)" />
+                </figure>
+                <figure class="polaroid" data-pos="2">
+                  <img src="Assets/selfi-3.png" alt="Foto 3 (placeholder, a definir)" />
+                </figure>
+                <figure class="polaroid" data-pos="3">
+                  <img src="Assets/selfi-4.png" alt="Foto 4 (placeholder, a definir)" />
+                </figure>
+              </div>
+            </div>
+            <div class="paper-copy">
+              <h2 class="reveal">Un formato para cada recuerdo.</h2>
+              <p class="reveal">Elegí el tamaño que mejor acompañe tus ideas y recuerdos.</p>
+              <div class="paper-cards reveal-group">
+                <div class="paper-card reveal-item">
+                  <span class="paper-tag paper-tag-purple">2x3</span>
+                  <span class="card-arrow" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                  <h3>Adhesivo</h3>
+                  <p>Pequeño, adhesivo para journals, agendas y stickers.</p>
+                </div>
+                <div class="paper-card paper-card-peach reveal-item">
+                  <span class="paper-tag paper-tag-purple">3x4</span>
+                  <span class="card-arrow" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                  <h3>Fotográfico</h3>
+                  <p>Más espacio para retratos, paisajes y fotos grupales.</p>
+                </div>
+              </div>
+            </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="quote-banner">
+          <div class="container">
+            <div class="quote-box">
+              <img src="Assets/figma-banner-experiencias.png" alt="Momento cálido al aire libre junto a la impresora HP Sprocket" />
+              <div class="quote-overlay"></div>
+              <p class="quote-text reveal">las experiencias<br />no se olvidan.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="specs" id="caracteristicas">
+          <div class="container specs-grid">
+            <div class="specs-visual reveal">
+              <div class="image-carousel stack-carousel">
+                <figure class="image-card" data-pos="0">
+                  <img src="Assets/vista 1.png" alt="Impresora HP Sprocket, vista en ángulo" />
+                </figure>
+                <figure class="image-card" data-pos="1">
+                  <img src="Assets/vista 2.png" alt="Impresora HP Sprocket, vista frontal" />
+                </figure>
+                <figure class="image-card" data-pos="2">
+                  <img src="Assets/vista 3.png" alt="Impresora HP Sprocket, vista trasera" />
+                </figure>
+                <figure class="image-card" data-pos="3">
+                  <img src="Assets/vista 4.png" alt="Impresora HP Sprocket, vista de perfil" />
+                </figure>
+              </div>
+            </div>
+            <div class="specs-copy">
+              <div class="specs-heading">
+                <p class="eyebrow">Características</p>
+                <h2 class="reveal">Todo en un cuerpo <br />compacto</h2>
+                <p class="specs-intro reveal">Cada detalle pensado para que quepa en tu bolsillo y esté siempre lista.</p>
+              </div>
+              <dl class="specs-table reveal-group">
+                <div class="specs-row reveal-item">
+                  <dt>Peso</dt>
+                  <dd>172 gramos</dd>
+                </div>
+                <div class="specs-row reveal-item">
+                  <dt>Medidas</dt>
+                  <dd>116 x 78 x 22 mm</dd>
+                </div>
+                <div class="specs-row reveal-item">
+                  <dt>Baterías</dt>
+                  <dd>Litio - 35 impresiones por carga</dd>
+                </div>
+                <div class="specs-row reveal-item">
+                  <dt>Conectividad</dt>
+                  <dd>Bluetooth</dd>
+                </div>
+                <div class="specs-row reveal-item">
+                  <dt>Compatibilidad</dt>
+                  <dd>iOS + Android</dd>
+                </div>
+                <div class="specs-row reveal-item">
+                  <dt>Papel</dt>
+                  <dd>ZINK sin tinta - adhesivo</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </section>
+
+        <section class="colors" id="colores">
+          <div class="container">
+            <div class="colors-grid">
+              <div class="colors-copy">
+                <h2 class="reveal">Una foto mil <br />destinos.</h2>
+                <p class="reveal">Cada foto puede ser mucho más que un recuerdo: un journal, <br />un regalo, una pared llena de historias.</p>
+
+                <div class="community-cta reveal">
+                  <p class="community-eyebrow">Comunidad HP Sprocket</p>
+                  <p class="community-text">
+                    Miles de personas alrededor del mundo ya encontraron su forma de imprimir, decorar y compartir. Sumate y descubrí la tuya.
+                  </p>
+                  <a href="#contacto" class="community-link">
+                    Descubrí lo que otros crean con HP Sprocket
+                    <span class="community-arrow" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </span>
+                  </a>
+                </div>
+              </div>
+              <div class="swatch-grid reveal-group">
+                <span class="swatch reveal-item">
+                  <img src="Assets/Scrapbook.png" alt="Página de scrapbook con fotos de un viaje" />
+                </span>
+                <span class="swatch reveal-item">
+                  <img src="Assets/Fotos del dia a dia.png" alt="Fotos instantáneas de momentos cotidianos" />
+                </span>
+                <span class="swatch reveal-item">
+                  <img src="Assets/Journals de viaje.png" alt="Journal de viaje con una foto pegada" />
+                </span>
+                <span class="swatch reveal-item">
+                  <img src="Assets/Regalos personalizados.png" alt="Caja de regalo personalizada con fotos impresas" />
+                </span>
+                <span class="swatch reveal-item">
+                  <img src="Assets/Moodboard.png" alt="Moodboard de inspiración para un viaje" />
+                </span>
+                <span class="swatch reveal-item">
+                  <img src="Assets/Historias que quedan.png" alt="Journal con una frase y una foto de playa" />
+                </span>
+                <span class="swatch reveal-item">
+                  <img src="Assets/Albunes.png" alt="Álbum de fotos con impresiones instantáneas" />
+                </span>
+                <span class="swatch reveal-item">
+                  <img src="Assets/Decoracion.png" alt="Fotos instantáneas usadas como decoración de pared" />
+                </span>
+                <span class="swatch reveal-item">
+                  <img src="Assets/Recuerdos de viaje.png" alt="Mano sosteniendo una foto instantánea frente a un paisaje" />
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <footer class="site-footer" id="contacto">
+        <div class="footer-box">
+          <div class="footer-main">
+            <div class="footer-cta">
+              <span class="footer-logo">
+                <img class="footer-logo-mark" src="Assets/Logo_HP.png" alt="HP" />
+                <span class="footer-logo-text">Sprocket</span>
+              </span>
+              <h2 class="reveal">Imprimí tus <br />momentos.</h2>
+              <p class="reveal">¿Querés saber más sobre la HP Sprocket?</p>
+            </div>
+            <div class="footer-links">
+              <div class="footer-col">
+                <h3>Redes</h3>
+                <a href="#">Instagram</a>
+                <a href="#">TikTok</a>
+                <a href="#">Facebook</a>
+                <a href="#">YouTube</a>
+              </div>
+              <div class="footer-col">
+                <h3>Contacto</h3>
+                <a href="https://www.hp.com/sprocket">www.hp.com/sprocket</a>
+                <a href="#">Soporte técnico</a>
+                <a href="#">Dónde comprar</a>
+              </div>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <p>© <span data-year></span> HP Inc. Todos los derechos reservados.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
