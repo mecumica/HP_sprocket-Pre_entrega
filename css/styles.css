@@ -8,12 +8,27 @@
   --color-primary-dark: #0a0a10;
 
   /* Color secundario — verde salvia, moderno/tecnológico (tags, fondos secundarios) */
-  --color-secondary: #8eb694;
-  --color-secondary-dark: #74a17d;
+  --color-secondary: #969d69;
+  --color-secondary-dark: #7d8456;
 
   /* Color de acento — amarillo cálido, vívido y cercano (CTAs, hover, elementos interactivos) */
   --color-accent: #fbdfa2;
   --color-accent-dark: #f0c97e;
+
+  /* Naranja — usado en el CTA del hero */
+  --color-orange: #f98d5b;
+  --color-orange-dark: #f2793d;
+
+  /* Lavanda — fondo de la sección "papel" (referencia Figma) */
+  --color-lavender: #c7bcf0;
+
+  /* Gris claro — pastillas de metadatos (10 s, 2x3, 3x4) */
+  --color-tag-gray: #d9d9d9;
+
+  /* Pasteles — badges de íconos ZINK / Bluetooth / Portátil */
+  --color-badge-purple: #c9c2f2;
+  --color-badge-peach: #fce2d2;
+  --color-badge-yellow: #fbecc2;
 
   /* Fondo principal */
   --color-bg: #fdfaf3; /* blanco cálido, alto contraste con el texto */
@@ -53,6 +68,11 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+section[id] {
+  scroll-margin-top: 100px;
 }
 
 body {
@@ -72,17 +92,20 @@ a {
   text-decoration: none;
 }
 
-.page-shell {
-  overflow: hidden;
-}
-
 .container {
-  width: min(1280px, calc(100% - 2.5rem));
+  width: min(1280px, calc(100% - 20px));
   margin: 0 auto;
 }
 
+/* Todas las secciones (y el footer) reparten el mismo espacio vertical:
+   cada una aporta 46px arriba y abajo, así la distancia entre bloques
+   consecutivos es siempre la misma (92px). */
 section {
-  padding: 6rem 0;
+  padding: 46px 0;
+}
+
+.site-footer {
+  padding: 46px 0 3rem;
 }
 
 h1,
@@ -150,12 +173,12 @@ p {
 }
 
 .btn-primary {
-  background: var(--color-accent);
-  color: var(--color-text);
+  background: var(--color-orange);
+  color: #fff;
 }
 
 .btn-primary:hover {
-  background: var(--color-accent-dark);
+  background: var(--color-orange-dark);
 }
 
 /* Animaciones de entrada al hacer scroll (títulos, bajadas y cards) */
@@ -315,12 +338,12 @@ p {
 /* Hero */
 
 .hero {
-  padding: 1.5rem 0 0;
+  padding: 10px 0 0;
 }
 
 .hero-banner {
   position: relative;
-  margin: 0 1.5rem;
+  margin: 0 10px;
   border-radius: 20px;
   overflow: hidden;
   min-height: 700px;
@@ -334,6 +357,15 @@ p {
   inset: 0;
   height: 100%;
   object-fit: cover;
+  --hero-zoom: 1;
+  transform: scale(var(--hero-zoom));
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-banner img {
+    transform: none;
+  }
 }
 
 .hero-overlay {
@@ -386,89 +418,279 @@ p {
   margin-bottom: 1.8rem;
 }
 
-/* Product strip */
+/* Product strip: una sola secuencia con scroll fijado. Fases:
+   1) la impresora aparece e imprime la polaroid (clip-path progresivo),
+   2) la polaroid "vuela" hasta la posición de la primera del apilado
+      mientras la impresora sube y sale de plano,
+   3) ZINK / Bluetooth / Portátil se suman en los scrolls siguientes. */
 
-.product-strip-inner {
-  text-align: center;
-}
-
-.product-shot {
-  max-width: 400px;
-  aspect-ratio: 312 / 594;
-  margin: -21.5rem auto 3rem;
+.product-strip {
+  --polaroid-size: calc(clamp(336px, 90vw, 1170px) * 0.245);
+  /* La impresora arranca montada sobre el hero. */
   position: relative;
-  left: 20px;
   z-index: 2;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  filter: drop-shadow(0 30px 45px rgba(0, 0, 0, 0.1));
+  margin-top: -14rem;
+  padding-top: 0;
+  /* Nada acá es clickeable y la sección pisa el CTA del hero: que los
+     clicks pasen de largo. */
+  pointer-events: none;
 }
 
-.product-shot img {
-  height: 100%;
-  object-fit: cover;
-  --print-progress: 0;
-  /* La foto vive en el ~35%-97% inferior de esta imagen (impresora + foto ya
-     compuestas en un solo PNG). Al scrollear, el recorte inferior se reduce
-     progresivamente para simular que la foto sale de la ranura. */
-  clip-path: inset(0 0 calc(35% - (32% * var(--print-progress))) 0);
-  will-change: clip-path;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .product-shot img {
-    clip-path: none;
-  }
-}
-
-.feature-row {
+.print-intro {
+  position: absolute;
+  inset: 0;
   display: flex;
+  align-items: flex-start;
   justify-content: center;
+  pointer-events: none;
+  /* Debajo del apilado: la polaroid que vuela queda como la primera del
+     mazo y las siguientes se apilan encima. */
+  z-index: 1;
+}
+
+.print-intro-inner {
+  position: relative;
+  --printer-w: min(90vw, calc((100vh - 84px) * 1.29), 1237px);
+  width: var(--printer-w);
+  margin-top: -20px;
+}
+
+.print-printer-img {
+  position: relative;
+  z-index: 2;
+  width: var(--printer-w);
+  /* El cuerpo del aparato está corrido a la izquierda dentro del PNG (2.2%);
+     se compensa para que quede centrado en pantalla. */
+  translate: calc(var(--printer-w) * 0.022) 0;
+  filter: drop-shadow(0 30px 45px rgba(0, 0, 0, 0.12));
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Cuando la polaroid ya voló, la impresora sube y desaparece de plano. */
+[data-stage="fly"] .print-printer-img,
+[data-stage="1"] .print-printer-img,
+[data-stage="2"] .print-printer-img,
+[data-stage="3"] .print-printer-img {
+  transform: translateY(calc(-100vh - 100%));
+}
+
+.print-emerge {
+  position: absolute;
+  /* Arranca metida detrás de la boca de la impresora (borde inferior del
+     aparato a ~0.45 del ancho del PNG). */
+  top: calc(var(--printer-w) * 0.38);
+  left: 50%;
+  translate: -50% 0;
+  z-index: 1;
+  /* El marco polaroid se dibuja con padding; al ser un elemento absoluto los
+     porcentajes referirían al contenedor, así que se calculan sobre el ancho
+     propio de la figura. */
+  --emerge-w: calc(var(--printer-w) * 0.224);
+  width: var(--emerge-w);
+  margin: 0;
+  background: #fff;
+  padding: calc(var(--emerge-w) * 0.06) calc(var(--emerge-w) * 0.06) calc(var(--emerge-w) * 0.2);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  clip-path: inset(0 0 calc(100% - (100% * var(--print-progress, 0))) 0);
+  transition: clip-path 0.05s linear, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+}
+
+/* Vuelo tipo sticker: aterriza exactamente donde está la primera polaroid
+   del apilado (las variables --fly-* las calcula el JS midiendo el layout). */
+[data-stage="fly"] .print-emerge,
+[data-stage="1"] .print-emerge,
+[data-stage="2"] .print-emerge,
+[data-stage="3"] .print-emerge {
+  clip-path: inset(0 0 0 0);
+  transform: translate(var(--fly-x, 0px), var(--fly-y, 0px)) scale(var(--fly-s, 1)) rotate(-5deg);
+}
+
+/* La polaroid que voló queda como la primera del mazo: no se reemplaza. */
+
+.print-emerge img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+.print-scroll {
+  position: relative;
+  /* ~Una pantalla de scroll por fase: imprimir, vuelo de la polaroid,
+     ZINK, Bluetooth y Portátil. */
+  height: 520vh;
+}
+
+.print-sticky {
+  position: sticky;
+  top: 84px;
+  /* Ocupa toda la pantalla bajo el header para que la composición quede
+     centrada mientras el scroll está fijado. */
+  height: calc(100vh - 84px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.print-stage {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.print-columns {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
   gap: 3rem;
 }
 
-.feature-item {
-  flex: 1;
-  max-width: 320px;
-  padding: 0 1.5rem;
-  border-left: 1px solid var(--color-border);
+.print-stack {
+  position: relative;
+  /* 20% más grandes que la polaroid que imprime la impresora, a pedido. */
+  --stack-w: calc(var(--polaroid-size) * 1.2);
+  height: calc(var(--stack-w) * 1.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.print-stack-photo {
+  position: absolute;
+  width: var(--stack-w);
+  margin: 0;
+  background: #fff;
+  padding: calc(var(--stack-w) * 0.06) calc(var(--stack-w) * 0.06) calc(var(--stack-w) * 0.2);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
   opacity: 0;
-  /* Efecto "pegatina", igual que las fotos de "Una foto mil destinos": arranca
-     chico y girado, y se asienta plano al aparecer. */
-  transform: scale(0.6) rotate(-10deg);
+  transform: scale(0.7) rotate(-10deg);
   transition: opacity 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.feature-item:first-child {
-  border-left: none;
+.print-stack-photo img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
 }
 
-.feature-item:nth-child(even) {
-  transform: scale(0.6) rotate(10deg);
+.print-stack-photo[data-stack="0"] {
+  z-index: 1;
 }
 
-.feature-row.is-visible .feature-item {
+.print-stack-photo[data-stack="1"] {
+  z-index: 2;
+}
+
+.print-stack-photo[data-stack="2"] {
+  z-index: 3;
+}
+
+/* La figura data-stack="0" nunca se muestra: es la misma foto que imprime la
+   impresora y esa polaroid ya aterriza acá volando. Queda como marcador
+   invisible para que el JS mida el punto de aterrizaje. */
+
+[data-stage="2"] .print-stack-photo[data-stack="1"],
+[data-stage="3"] .print-stack-photo[data-stack="1"] {
   opacity: 1;
-  transform: scale(1) rotate(0deg);
+  transform: translate(48px, 26px) rotate(7deg) scale(0.98);
 }
 
-.feature-row.is-visible .feature-item:nth-child(1) {
-  transition-delay: 0.1s;
+[data-stage="3"] .print-stack-photo[data-stack="2"] {
+  opacity: 1;
+  transform: translate(-42px, 58px) rotate(-8deg) scale(0.96);
 }
 
-.feature-row.is-visible .feature-item:nth-child(2) {
-  transition-delay: 0.3s;
+.print-features {
+  position: relative;
+  min-height: 150px;
+  text-align: left;
 }
 
-.feature-row.is-visible .feature-item:nth-child(3) {
-  transition-delay: 0.5s;
+.print-feature {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+[data-stage="1"] .print-feature[data-feature="0"] {
+  opacity: 1;
+  transform: none;
+}
+
+[data-stage="2"] .print-feature[data-feature="1"] {
+  opacity: 1;
+  transform: none;
+}
+
+[data-stage="3"] .print-feature[data-feature="2"] {
+  opacity: 1;
+  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .feature-item {
-    opacity: 1;
-    transform: none;
+  .print-emerge {
+    clip-path: none;
     transition: none;
+  }
+
+  .print-printer-img,
+  .print-stack-photo,
+  .print-feature {
+    transition: none;
+  }
+}
+
+/* Banda de texto continua */
+
+.marquee {
+  overflow: hidden;
+  padding: 1.1rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 16s linear infinite;
+}
+
+.marquee-track span {
+  display: inline-flex;
+  align-items: center;
+  font-family: "Inter", sans-serif;
+  /* Misma tipografía que los títulos de sección (h2). */
+  font-weight: 700;
+  font-size: clamp(1.8rem, 3.6vw, 3.06rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  white-space: nowrap;
+  padding-right: 1.5rem;
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
   }
 }
 
@@ -476,34 +698,44 @@ p {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
+  flex-shrink: 0;
+  width: 92px;
+  height: 92px;
   border-radius: var(--radius-sm);
-  margin-bottom: 1rem;
+}
+
+.icon-badge-purple {
+  background: var(--color-badge-purple);
 }
 
 .icon-badge-peach {
-  background: var(--color-surface-peach);
+  background: var(--color-badge-peach);
 }
 
 .icon-badge-yellow {
-  background: var(--color-surface-yellow);
-}
-
-.icon-badge-sage {
-  background: var(--color-surface-tint);
+  background: var(--color-badge-yellow);
 }
 
 .drop-icon {
   display: inline-block;
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   color: var(--color-primary);
 }
 
-.feature-item p {
-  font-size: 1rem;
+.feature-text h3 {
+  font-size: 2rem;
+  margin-bottom: 0.35rem;
+}
+
+.feature-text p {
+  font-size: 1.25rem;
+  line-height: 1.5;
   color: var(--color-muted);
+  /* Ancho acotado para que la bajada quiebre en ~2 líneas y las tres
+     features (ZINK / Bluetooth / Portátil) midan lo mismo y el título
+     quede siempre a la misma altura. */
+  max-width: 22rem;
 }
 
 /* Section heading */
@@ -526,6 +758,31 @@ p {
   gap: 1.5rem;
 }
 
+/* Entrada al scroll de izquierda a derecha: cada card llega deslizándose
+   desde la izquierda y crece levemente, en cascada (el stagger del JS hace
+   que aparezcan en orden 1→4). Se usan "translate" y "scale" (independientes
+   de "transform") para no pisar el translateY del hover. */
+.step-grid .reveal-item {
+  translate: -90px 0;
+  scale: 0.9;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), translate 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    scale 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.step-grid .reveal-item.is-visible {
+  translate: 0 0;
+  scale: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-grid .reveal-item {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+    transition: none;
+  }
+}
+
 .step-card {
   background: var(--color-surface);
   border-radius: var(--radius-md);
@@ -535,32 +792,27 @@ p {
   align-items: flex-start;
   text-align: left;
   gap: 0.5rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .step-card:hover {
   transform: translateY(-6px);
-  box-shadow: var(--shadow);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.1);
 }
 
 .step-photo {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  height: 200px;
   border-radius: var(--radius-sm);
   overflow: hidden;
   margin-bottom: 1rem;
 }
 
 .step-photo img {
+  width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.step-number {
-  font-size: 2.6rem;
-  font-weight: 500;
-  font-family: "Inter", sans-serif;
 }
 
 .step-card h3 {
@@ -568,17 +820,87 @@ p {
   margin-bottom: 0.2rem;
 }
 
-.step-card p:last-child {
+.step-card p {
   color: var(--color-muted);
   font-size: 1rem;
 }
 
+.step-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+
+.step-time {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  background: var(--color-tag-gray);
+  color: var(--color-text);
+  font-family: "Inter", sans-serif;
+  font-size: 0.85rem;
+}
+
+.step-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--color-orange);
+  color: #fff;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.step-arrow svg {
+  width: 16px;
+  height: 16px;
+}
+
+.step-card:hover .step-arrow {
+  transform: translate(3px, -3px);
+  background: var(--color-orange-dark);
+}
+
 /* Paper section */
 
+/* El bloque lavanda estira hasta los mismos márgenes que el hero (10px por
+   lado), ignorando el ancho del container. */
+.paper-section .container {
+  width: auto;
+  max-width: none;
+  margin: 0 10px;
+}
+
 .paper-shell {
-  background: var(--color-primary);
-  border-radius: var(--radius-lg);
+  background: var(--color-lavender);
+  /* Mismo radio que el resto de los contenedores de sección. */
+  border-radius: 15px;
   padding: 3.5rem;
+}
+
+/* El contenido interno conserva el ancho de lectura del resto del sitio. */
+.paper-grid {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Sube 100px para acercarse al final de la secuencia de la impresora; el
+   z-index evita que la escena fijada (print-stage) tape el título al cruzarse. */
+.how-it-works {
+  position: relative;
+  z-index: 3;
+  margin-top: -100px;
+}
+
+.how-it-works-shell {
+  background: transparent;
 }
 
 .paper-grid {
@@ -591,30 +913,37 @@ p {
 .paper-copy {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding-left: 1.5rem;
-  /* Misma línea divisoria (1px, blanco translúcido) que ya usa el footer sobre fondo oscuro */
-  border-left: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.paper-copy h2,
-.paper-copy p {
-  color: var(--color-on-dark);
-}
-
-.paper-copy p {
-  opacity: 0.72;
-  margin-bottom: 0;
+  justify-content: flex-start;
+  /* El PNG de la polaroid tiene aire transparente (4.5% arriba, 5.5% abajo):
+     estos paddings alinean el título con el borde superior del marco visible
+     y las cards con el inferior. */
+  padding-top: calc(min(560px, 100%) * 0.045);
+  padding-bottom: calc(min(560px, 100%) * 0.055);
 }
 
 .paper-copy h2 {
-  margin-bottom: 0.1rem;
+  color: #fff;
+}
+
+.paper-copy p {
+  color: var(--color-text);
+}
+
+.paper-copy p {
+  font-weight: 500;
+  margin-bottom: 0;
+  /* Quiebra en dos líneas, como en la referencia. */
+  max-width: 24rem;
+}
+
+.paper-copy h2 {
+  margin-bottom: 1.5rem;
 }
 
 .paper-visual {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 
 .paper-cards {
@@ -622,16 +951,23 @@ p {
   flex-direction: row;
   flex-wrap: wrap;
   gap: 1.6rem;
-  margin-top: 2.5rem;
+  /* Empuja las cards al fondo de la columna, contra el borde inferior de la
+     polaroid; el padding asegura un mínimo de aire cuando la columna fluye. */
+  margin-top: auto;
+  padding-top: 2rem;
 }
 
 .paper-card {
   position: relative;
   flex: 1;
   min-width: 220px;
-  background: var(--color-surface-tint);
+  min-height: 205px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: var(--color-surface);
   border-radius: var(--radius-sm);
-  padding: 2.25rem 1.75rem 2rem;
+  padding: 1.5rem 1.75rem 2rem;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -642,53 +978,23 @@ p {
   box-shadow: var(--shadow);
 }
 
-.paper-card-peach {
-  background: var(--color-surface-peach);
-}
-
-.card-arrow {
-  position: absolute;
-  top: 1.9rem;
-  right: 1.4rem;
-  width: 36px;
-  height: 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: var(--color-surface);
-  color: var(--color-primary);
-  transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
-}
-
-.card-arrow svg {
-  width: 16px;
-  height: 16px;
-}
-
-.paper-card:hover .card-arrow {
-  transform: translate(3px, -3px);
-  background: var(--color-primary);
-  color: var(--color-on-dark);
-}
-
 .paper-tag {
   display: inline-block;
+  /* Chip crema arriba a la derecha, como en la referencia. */
+  margin-left: auto;
   padding: 0.4rem 0.9rem;
   border-radius: 999px;
-  color: #fff;
+  background: var(--color-surface-peach);
+  color: var(--color-text);
   font-size: 0.85rem;
   font-weight: 600;
-  margin-bottom: 0.8rem;
-}
-
-.paper-tag-purple {
-  background: var(--color-primary);
 }
 
 .paper-card h3 {
-  font-size: 1.44rem;
-  margin-bottom: 0.4rem;
+  font-size: 1.75rem;
+  margin-top: auto;
+  padding-top: 1.5rem;
+  margin-bottom: 0.6rem;
 }
 
 .paper-card p {
@@ -698,11 +1004,28 @@ p {
 
 /* Quote banner */
 
+/* Espacio de 70px entre la sección del papel y el banner (35px + 35px);
+   los demás espaciados entre secciones siguen usando los 6rem generales. */
+.paper-section {
+  padding-bottom: 35px;
+}
+
+.quote-banner {
+  padding-top: 35px;
+}
+
+/* El banner llega a los mismos márgenes laterales que el hero (10px). */
+.quote-banner .container {
+  width: auto;
+  max-width: none;
+  margin: 0 10px;
+}
+
 .quote-box {
   position: relative;
   border-radius: 20px;
   overflow: hidden;
-  min-height: 320px;
+  min-height: 360px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -756,53 +1079,38 @@ p {
 
 /* Carrusel de polaroids apiladas */
 
+/* Polaroid grande única: los PNGs comparten el mismo marco pintado, así que
+   el crossfade entre ellos se ve como si cambiara solo la foto interna. */
 .polaroid-stack {
   position: relative;
-  left: -80px;
-  width: 340px;
-  height: 400px;
+  width: min(560px, 100%);
+  aspect-ratio: 1 / 1;
   cursor: pointer;
+  /* El PNG tiene 13.2% de aire transparente a cada lado: se corre a la
+     izquierda para que el marco visible quede a la misma distancia del
+     borde del contenedor que el resto del contenido (padding parejo). */
+  margin-left: calc(min(560px, 100%) * -0.132);
 }
 
 .polaroid {
   position: absolute;
   inset: 0;
   margin: 0;
-  background: var(--color-surface);
-  padding: 12px 12px 40px;
-  border-radius: 4px;
-  box-shadow: 0 16px 32px rgba(22, 23, 31, 0.16);
-  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.7s ease;
+  opacity: 0;
+  transition: opacity 0.7s ease;
 }
 
 .polaroid img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  border-radius: 1px;
+  object-fit: contain;
+  /* El PNG tiene aire transparente alrededor del marco: drop-shadow sigue la
+     silueta real (box-shadow marcaría el cuadrado completo). */
+  filter: drop-shadow(0 16px 28px rgba(22, 23, 31, 0.18));
 }
 
 .polaroid[data-pos="0"] {
-  transform: translate(0, 0) rotate(-4deg) scale(1);
   opacity: 1;
-  z-index: 4;
-}
-
-.polaroid[data-pos="1"] {
-  transform: translate(16px, 14px) rotate(6deg) scale(0.95);
-  opacity: 0.9;
-  z-index: 3;
-}
-
-.polaroid[data-pos="2"] {
-  transform: translate(-12px, 24px) rotate(-9deg) scale(0.9);
-  opacity: 0.75;
-  z-index: 2;
-}
-
-.polaroid[data-pos="3"] {
-  transform: translate(8px, 32px) rotate(9deg) scale(0.86);
-  opacity: 0.55;
   z-index: 1;
 }
 
@@ -822,46 +1130,34 @@ p {
   cursor: pointer;
 }
 
+/* Sin contenedor: la impresora flota sobre el fondo y las vistas se
+   funden entre sí (solo la de adelante es visible). */
 .image-card {
   position: absolute;
   inset: 0;
   margin: 0;
-  background: #fff;
-  border-radius: 20px;
-  overflow: hidden;
-  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.7s ease;
+  transition: opacity 0.7s ease;
 }
 
 .image-card img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 10%;
+  padding: 6%;
+  /* El PNG trae fondo blanco pintado: multiply lo funde con el crema. */
+  mix-blend-mode: multiply;
 }
 
 /* Carrusel vertical: las fotos se apilan y suben hacia arriba, sin rotación */
 .image-card[data-pos="0"] {
-  transform: translateY(0) scale(1);
   opacity: 1;
   z-index: 4;
 }
 
-.image-card[data-pos="1"] {
-  transform: translateY(-16px) scale(0.96);
-  opacity: 0.85;
-  z-index: 3;
-}
-
-.image-card[data-pos="2"] {
-  transform: translateY(-30px) scale(0.92);
-  opacity: 0.65;
-  z-index: 2;
-}
-
+.image-card[data-pos="1"],
+.image-card[data-pos="2"],
 .image-card[data-pos="3"] {
-  transform: translateY(-42px) scale(0.88);
-  opacity: 0.45;
-  z-index: 1;
+  opacity: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -870,39 +1166,55 @@ p {
   }
 }
 
+/* Entrada lateral: la impresora aparece desde la izquierda y el texto
+   desde la derecha. */
+.specs-visual.reveal {
+  translate: -70px 0;
+}
+
+.specs-copy .reveal,
+.specs-copy .reveal-item {
+  translate: 70px 0;
+}
+
+.specs-visual.reveal.is-visible,
+.specs-copy .reveal.is-visible,
+.specs-copy .reveal-item.is-visible {
+  translate: 0 0;
+}
+
 .specs-intro {
   color: var(--color-muted);
   margin-bottom: 2.25rem;
 }
 
 .specs-table {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.9rem 2.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .specs-row {
   display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  padding-top: 1.1rem;
-  border-top: 1px solid var(--color-border);
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .specs-row dt {
   font-family: "Inter", sans-serif;
-  font-weight: 600;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-muted);
+  font-weight: 400;
+  font-size: 1.15rem;
+  color: var(--color-text);
 }
 
 .specs-row dd {
-  font-weight: 600;
-  font-size: 1.25rem;
+  font-weight: 700;
+  font-size: 1.15rem;
   letter-spacing: -0.01em;
   color: var(--color-text);
+  text-align: right;
 }
 
 /* Colors */
@@ -1021,24 +1333,16 @@ p {
   height: 100%;
 }
 
-/* Footer */
-
-.site-footer {
-  padding: 2rem 0 3rem;
-}
+/* Footer: el padding vertical se define junto a las secciones para mantener
+   la misma distancia entre todos los bloques. */
 
 .footer-box {
-  margin: 0 1.5rem;
-  background: var(--color-secondary);
+  margin: 0 10px;
+  /* Footer oscuro, como en la referencia. */
+  background: var(--color-primary);
   border-radius: 20px;
   padding: 3.5rem 3.5rem 2.5rem;
-  color: var(--color-text);
-}
-
-.footer-main {
-  display: flex;
-  justify-content: space-between;
-  gap: 3rem;
+  color: var(--color-on-dark);
 }
 
 .footer-logo {
@@ -1046,6 +1350,7 @@ p {
   align-items: center;
   gap: 0.6rem;
   margin-bottom: 1.6rem;
+  color: var(--color-on-dark);
 }
 
 .footer-logo-mark {
@@ -1061,60 +1366,25 @@ p {
 }
 
 .footer-cta h2 {
-  color: var(--color-text);
+  color: var(--color-on-dark);
 }
 
 .footer-cta p {
-  color: var(--color-muted);
-  margin-bottom: 1.6rem;
+  color: var(--color-on-dark-muted);
 }
 
-.footer-links {
-  display: flex;
-  gap: 5rem;
-  flex-shrink: 0;
-}
-
-.footer-col h3 {
-  font-family: "Inter", sans-serif;
-  font-size: 0.95rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: var(--color-primary);
-}
-
-.footer-col {
-  display: flex;
-  flex-direction: column;
-}
-
-.footer-col a {
-  color: var(--color-muted);
-  font-family: "Inter", sans-serif;
-  font-size: 0.95rem;
-  padding: 0.3rem 0;
-  transition: color 0.2s ease;
-}
-
-.footer-col a:hover {
-  color: var(--color-primary);
-}
-
-.footer-bottom {
+.footer-divider {
   margin-top: 2.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgba(22, 23, 31, 0.12);
-  text-align: center;
-}
-
-.footer-bottom p {
-  color: var(--color-muted);
-  font-size: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 @media (max-width: 1024px) {
   section {
-    padding: 4.5rem 0;
+    padding: 2.25rem 0;
+  }
+
+  .site-footer {
+    padding-top: 4.5rem;
   }
 
   .paper-shell {
@@ -1129,9 +1399,9 @@ p {
     padding-bottom: 8rem;
   }
 
-  .product-shot {
-    max-width: 320px;
-    margin: -18rem auto 2.5rem;
+  .print-columns {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .step-grid {
@@ -1148,31 +1418,11 @@ p {
     padding-left: 0;
     padding-top: 2rem;
     border-left: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid rgba(22, 23, 31, 0.14);
   }
 
   .specs-visual {
     order: -1;
-  }
-
-  .feature-row {
-    flex-wrap: wrap;
-  }
-
-  .feature-item {
-    flex: 1 1 45%;
-    border-left: none;
-    border-top: 1px solid var(--color-border);
-    padding-top: 1.5rem;
-  }
-
-  .footer-main {
-    flex-direction: column;
-    gap: 2.5rem;
-  }
-
-  .footer-links {
-    gap: 3rem;
   }
 }
 
@@ -1184,6 +1434,19 @@ p {
   .nav-toggle {
     display: flex;
     justify-self: end;
+    width: 42px;
+    height: 42px;
+    padding: 11px 9px;
+    border-radius: 12px;
+    /* Chip translúcido: sin esto las barritas blancas se pierden sobre las
+       nubes claras de la foto del hero. */
+    background: rgba(22, 23, 31, 0.32);
+    backdrop-filter: blur(6px);
+  }
+
+  .site-header.is-scrolled .nav-toggle {
+    background: transparent;
+    backdrop-filter: none;
   }
 
   .site-nav {
@@ -1224,7 +1487,11 @@ p {
 
 @media (max-width: 640px) {
   section {
-    padding: 3.75rem 0;
+    padding: 2rem 0;
+  }
+
+  .site-footer {
+    padding-top: 3.75rem;
   }
 
   .nav-bar {
@@ -1232,7 +1499,7 @@ p {
   }
 
   .hero-banner {
-    margin: 0 0.75rem;
+    margin: 0 10px;
     min-height: 560px;
   }
 
@@ -1240,9 +1507,16 @@ p {
     padding-bottom: 6rem;
   }
 
-  .product-shot {
-    max-width: 240px;
-    margin: -15rem auto 2rem;
+  /* Los <br> del copy del hero fuerzan líneas más anchas que la pantalla;
+     en mobile el texto se corta, así que se deja fluir natural. */
+  .hero-text br {
+    display: none;
+  }
+
+  /* En pantallas chicas las polaroids proporcionales a la impresora quedan
+     muy chicas para leerse como sección; se les da un tamaño propio. */
+  .print-stack {
+    --stack-w: 53vw;
   }
 
   .step-grid {
@@ -1254,64 +1528,34 @@ p {
     padding: 1.25rem 1.1rem 1.5rem;
   }
 
-  .step-number {
-    font-size: 1.8rem;
-  }
-
   .step-card h3 {
     font-size: 1.1rem;
   }
 
-  .step-card p:last-child {
+  .step-card p {
     font-size: 0.85rem;
   }
 
-  /* Íconos ZINK / Bluetooth / Portátil: tarjetas individuales con borde,
-     uno al lado del otro. Si la bajada no entra, se recorta con "…". */
-  .feature-row {
-    flex-wrap: nowrap;
-    gap: 0.6rem;
-  }
-
-  .feature-item {
-    flex: 1 1 0;
-    min-width: 0;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: 1.4rem 0.6rem 1.1rem;
-  }
-
+  /* Íconos ZINK / Bluetooth / Portátil: lista vertical, ícono a la izquierda. */
   .icon-badge {
-    width: 48px;
-    height: 48px;
-  }
-
-  .icon-badge-peach,
-  .icon-badge-yellow,
-  .icon-badge-sage {
-    background: #ececeb;
-    border: none;
+    width: 60px;
+    height: 60px;
   }
 
   .drop-icon {
-    width: 20px;
-    height: 20px;
+    width: 26px;
+    height: 26px;
   }
 
-  .feature-item h3 {
+  .feature-text h3 {
+    font-size: 1.3rem;
+  }
+
+  .feature-text p {
     font-size: 1rem;
   }
 
-  .feature-item p {
-    font-size: 0.8rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-  }
-
-  /* Un formato para cada recuerdo: sin el bloque oscuro en mobile, polaroids centradas */
+  /* El papel para cada momento: sin el bloque de color en mobile */
   .paper-shell {
     background: transparent;
     padding: 0;
@@ -1341,9 +1585,8 @@ p {
   }
 
   .polaroid-stack {
-    left: 0;
-    width: 230px;
-    height: 270px;
+    width: min(300px, 100%);
+    margin-left: 0;
   }
 
   .image-carousel {
@@ -1351,20 +1594,9 @@ p {
     height: 300px;
   }
 
-  /* Specs: imágenes arriba (ya son el primer elemento), tabla centrada */
-  .specs-copy {
-    align-items: center;
-    text-align: center;
-  }
-
-  .specs-table {
-    grid-template-columns: 1fr;
-    gap: 1.4rem;
-    justify-items: center;
-  }
-
+  /* Specs: imágenes arriba (ya son el primer elemento) */
   .specs-row {
-    align-items: center;
+    font-size: 0.95rem;
   }
 
   /* Una foto mil destinos: título, después las imágenes, después la bajada y la comunidad */
@@ -1389,18 +1621,7 @@ p {
   }
 
   .footer-box {
-    margin: 0 0.75rem;
+    margin: 0 10px;
     padding: 2.5rem 1.75rem 2rem;
-  }
-
-  /* Footer: 2 columnas lado a lado, centradas */
-  .footer-links {
-    justify-content: center;
-    gap: 2.5rem;
-    text-align: center;
-  }
-
-  .footer-col {
-    align-items: center;
   }
 }
