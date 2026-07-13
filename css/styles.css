@@ -51,6 +51,11 @@
   --color-on-dark: #ffffff;
   --color-on-dark-muted: rgba(255, 255, 255, 0.72);
 
+  /* Alto del hero adaptable: 1040px es el diseño original (pensado para
+     monitores de ~900px de alto); en notebooks más bajas se achica junto
+     con la pantalla para que nada quede desproporcionado. */
+  --hero-h: min(1040px, calc(100vh + 140px));
+
   --radius-lg: 40px;
   --radius-md: 24px;
   --radius-sm: 14px;
@@ -347,9 +352,8 @@ p {
   border-radius: 20px;
   overflow: hidden;
   /* Alto suficiente para que la foto de fondo abarque también la impresora
-     que se monta encima (antes terminaba en 700px y la impresora sobresalía
-     sobre el fondo crema). */
-  min-height: 1040px;
+     que se monta encima; se adapta a monitores más bajos (notebooks). */
+  min-height: var(--hero-h);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -383,8 +387,9 @@ p {
   color: #fff;
   padding: 3rem 1.5rem 10rem;
   max-width: 760px;
-  /* Baja el bloque del título 30px dentro del hero agrandado. */
-  translate: 0 30px;
+  /* Sube el bloque del título dentro del hero para dejar aire a la
+     impresora (los breakpoints de tablet/mobile lo resetean). */
+  translate: 0 -30px;
 }
 
 .hero-eyebrow {
@@ -437,7 +442,11 @@ p {
      -14rem - 340px + 175px = calc(-29rem + 75px). */
   position: relative;
   z-index: 2;
-  margin-top: calc(-29rem + 75px);
+  /* La compensación es LA MITAD de lo que se achica el hero: el contenido
+     del hero está centrado, así que el CTA sube la mitad del achique — con
+     esto la impresora mantiene su distancia al CTA en cualquier pantalla.
+     El +15px (antes +75px) la sube 60px, igual que el bloque del título. */
+  margin-top: calc(-29rem + 15px + (1040px - var(--hero-h)) / 2);
   padding-top: 0;
   /* Nada acá es clickeable y la sección pisa el CTA del hero: que los
      clicks pasen de largo. */
@@ -458,7 +467,9 @@ p {
 
 .print-intro-inner {
   position: relative;
-  --printer-w: min(90vw, calc((100vh - 84px) * 1.29), 1237px);
+  /* Impresora más grande, proporcional al alto de pantalla: así la
+     composición se ve igual en un monitor grande y en una notebook. */
+  --printer-w: min(90vw, calc((100vh - 84px) * 1.5), 1320px);
   width: var(--printer-w);
   margin-top: -20px;
 }
@@ -562,8 +573,10 @@ p {
 .print-stack {
   position: relative;
   /* 35% más grandes que la polaroid que imprime la impresora, a pedido
-     (1.2 original, +25% y luego -10%). */
-  --stack-w: calc(var(--polaroid-size) * 1.35);
+     (1.2 original, +25% y luego -10%). El segundo término las achica en
+     monitores bajos SOLO lo justo para que el apilado entre en la
+     pantalla fijada (100vh - header - un margen chico). */
+  --stack-w: min(calc(var(--polaroid-size) * 1.35), calc((100vh - 144px) / 1.75));
   height: calc(var(--stack-w) * 1.75);
   display: flex;
   align-items: center;
