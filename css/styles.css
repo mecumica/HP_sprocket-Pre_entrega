@@ -126,12 +126,14 @@ h1 {
   font-size: clamp(2.16rem, 4.5vw, 4.05rem);
 }
 
+/* H2/H3 un 20% más grandes que la escala original (el H1 del hero queda
+   como estaba, a pedido). */
 h2 {
-  font-size: clamp(1.8rem, 3.6vw, 3.06rem);
+  font-size: clamp(2.16rem, 4.32vw, 3.67rem);
 }
 
 h3 {
-  font-size: 1.44rem;
+  font-size: 1.73rem;
 }
 
 p {
