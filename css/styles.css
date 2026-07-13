@@ -20,13 +20,13 @@
   --color-orange-dark: #f2793d;
 
   /* Lavanda — fondo de la sección "papel" (referencia Figma) */
-  --color-lavender: #c7bcf0;
+  --color-lavender: #c4bbfe;
 
   /* Gris claro — pastillas de metadatos (10 s, 2x3, 3x4) */
   --color-tag-gray: #d9d9d9;
 
   /* Pasteles — badges de íconos ZINK / Bluetooth / Portátil */
-  --color-badge-purple: #c9c2f2;
+  --color-badge-purple: #c4bbfe;
   --color-badge-peach: #fce2d2;
   --color-badge-yellow: #fbecc2;
 
@@ -346,7 +346,10 @@ p {
   margin: 0 10px;
   border-radius: 20px;
   overflow: hidden;
-  min-height: 700px;
+  /* Alto suficiente para que la foto de fondo abarque también la impresora
+     que se monta encima (antes terminaba en 700px y la impresora sobresalía
+     sobre el fondo crema). */
+  min-height: 1040px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -380,6 +383,8 @@ p {
   color: #fff;
   padding: 3rem 1.5rem 10rem;
   max-width: 760px;
+  /* Baja el bloque del título 30px dentro del hero agrandado. */
+  translate: 0 30px;
 }
 
 .hero-eyebrow {
@@ -426,10 +431,13 @@ p {
 
 .product-strip {
   --polaroid-size: calc(clamp(336px, 90vw, 1170px) * 0.245);
-  /* La impresora arranca montada sobre el hero. */
+  /* La impresora arranca montada sobre el hero. El hero creció 340px hacia
+     abajo (700px → 1040px), así que el margen compensa ese corrimiento y
+     además baja la impresora 175px en total (ajustes pedidos en iteraciones):
+     -14rem - 340px + 175px = calc(-29rem + 75px). */
   position: relative;
   z-index: 2;
-  margin-top: -14rem;
+  margin-top: calc(-29rem + 75px);
   padding-top: 0;
   /* Nada acá es clickeable y la sección pisa el CTA del hero: que los
      clicks pasen de largo. */
@@ -490,7 +498,7 @@ p {
   margin: 0;
   background: #fff;
   padding: calc(var(--emerge-w) * 0.06) calc(var(--emerge-w) * 0.06) calc(var(--emerge-w) * 0.2);
-  border-radius: 10px;
+  border-radius: 4px;
   box-shadow: var(--shadow);
   clip-path: inset(0 0 calc(100% - (100% * var(--print-progress, 0))) 0);
   transition: clip-path 0.05s linear, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
@@ -502,7 +510,10 @@ p {
 [data-stage="1"] .print-emerge,
 [data-stage="2"] .print-emerge,
 [data-stage="3"] .print-emerge {
-  clip-path: inset(0 0 0 0);
+  /* Inset negativo: el clip queda bien afuera del marco, así la polaroid
+     rotada no pierde las puntas ni la sombra (con inset(0) el recorte al
+     ras rasuraba las esquinas). */
+  clip-path: inset(-35% -35% -35% -35%);
   transform: translate(var(--fly-x, 0px), var(--fly-y, 0px)) scale(var(--fly-s, 1)) rotate(-5deg);
 }
 
@@ -550,8 +561,9 @@ p {
 
 .print-stack {
   position: relative;
-  /* 20% más grandes que la polaroid que imprime la impresora, a pedido. */
-  --stack-w: calc(var(--polaroid-size) * 1.2);
+  /* 35% más grandes que la polaroid que imprime la impresora, a pedido
+     (1.2 original, +25% y luego -10%). */
+  --stack-w: calc(var(--polaroid-size) * 1.35);
   height: calc(var(--stack-w) * 1.75);
   display: flex;
   align-items: center;
@@ -564,7 +576,8 @@ p {
   margin: 0;
   background: #fff;
   padding: calc(var(--stack-w) * 0.06) calc(var(--stack-w) * 0.06) calc(var(--stack-w) * 0.2);
-  border-radius: 8px;
+  /* Puntas apenas suavizadas, como una polaroid real. */
+  border-radius: 3px;
   box-shadow: var(--shadow);
   opacity: 0;
   transform: scale(0.7) rotate(-10deg);
@@ -616,6 +629,9 @@ p {
   inset: 0;
   display: flex;
   align-items: center;
+  /* Centrado en su columna: si queda pegado a la izquierda, todo el aire
+     sobrante se acumula del lado derecho de la pantalla. */
+  justify-content: center;
   gap: 1.25rem;
   opacity: 0;
   transform: translateY(16px);
@@ -657,6 +673,7 @@ p {
   padding: 1.1rem 0;
   position: relative;
   z-index: 1;
+  background: #fff;
 }
 
 .marquee-track {
@@ -669,9 +686,8 @@ p {
   display: inline-flex;
   align-items: center;
   font-family: "Inter", sans-serif;
-  /* Misma tipografía que los títulos de sección (h2). */
   font-weight: 700;
-  font-size: clamp(1.8rem, 3.6vw, 3.06rem);
+  font-size: clamp(1.1rem, 1.8vw, 1.6rem);
   line-height: 1.12;
   letter-spacing: -0.02em;
   color: var(--color-text);
@@ -723,6 +739,13 @@ p {
   color: var(--color-primary);
 }
 
+.feature-text {
+  /* Ancho FIJO (no máximo): así las tres features miden exactamente lo
+     mismo y el ícono no se corre de lugar cuando se intercambian. */
+  width: 22rem;
+  min-width: 0;
+}
+
 .feature-text h3 {
   font-size: 2rem;
   margin-bottom: 0.35rem;
@@ -732,10 +755,6 @@ p {
   font-size: 1.25rem;
   line-height: 1.5;
   color: var(--color-muted);
-  /* Ancho acotado para que la bajada quiebre en ~2 líneas y las tres
-     features (ZINK / Bluetooth / Portátil) midan lo mismo y el título
-     quede siempre a la misma altura. */
-  max-width: 22rem;
 }
 
 /* Section heading */
@@ -785,28 +804,32 @@ p {
 
 .step-card {
   background: var(--color-surface);
-  border-radius: var(--radius-md);
-  padding: 2rem 1.6rem 2.4rem;
+  /* Card estilo "perfil": muy redondeada, con marco blanco fino y parejo
+     alrededor de la foto y aire generoso abajo para el texto. */
+  border-radius: 28px;
+  padding: 0.65rem 0.65rem 1.4rem;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
   gap: 0.5rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 18px 40px rgba(22, 23, 31, 0.08);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .step-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 24px 48px rgba(22, 23, 31, 0.12);
 }
 
 .step-photo {
+  /* Ocupa todo el ancho interno: el padding de la card dibuja el marco
+     blanco fino y parejo alrededor de la foto, como en la referencia. */
   width: 100%;
-  height: 200px;
-  border-radius: var(--radius-sm);
+  height: 230px;
+  border-radius: 21px;
   overflow: hidden;
-  margin-bottom: 1rem;
+  margin: 0 0 1.15rem;
 }
 
 .step-photo img {
@@ -816,13 +839,18 @@ p {
 }
 
 .step-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
   font-size: 1.35rem;
   margin-bottom: 0.2rem;
+  padding: 0 0.6rem;
 }
 
 .step-card p {
   color: var(--color-muted);
   font-size: 1rem;
+  padding: 0 0.6rem;
 }
 
 .step-meta {
@@ -831,30 +859,41 @@ p {
   justify-content: space-between;
   width: 100%;
   margin-top: auto;
-  padding-top: 1.5rem;
+  padding: 1.5rem 0.6rem 0;
 }
 
 .step-time {
   display: inline-flex;
   align-items: center;
-  padding: 0.4rem 1rem;
-  border-radius: 999px;
-  background: var(--color-tag-gray);
+  gap: 0.35rem;
   color: var(--color-text);
   font-family: "Inter", sans-serif;
   font-size: 0.85rem;
+  font-weight: 500;
 }
 
+/* Ícono de reloj, como los contadores de la card de referencia. */
+.step-time::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* Pastilla clara estilo "Subscribe": pill gris con sombra suave. */
 .step-arrow {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  padding: 0.5rem 1.3rem;
   flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--color-orange);
-  color: #fff;
+  border-radius: 999px;
+  background: #efedf1;
+  color: var(--color-text);
+  box-shadow: 0 4px 12px rgba(22, 23, 31, 0.1);
   transition: transform 0.25s ease, background 0.25s ease;
 }
 
@@ -865,7 +904,6 @@ p {
 
 .step-card:hover .step-arrow {
   transform: translate(3px, -3px);
-  background: var(--color-orange-dark);
 }
 
 /* Paper section */
@@ -922,7 +960,7 @@ p {
 }
 
 .paper-copy h2 {
-  color: #fff;
+  color: var(--color-text);
 }
 
 .paper-copy p {
@@ -1061,20 +1099,41 @@ p {
 .specs-grid {
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
-  gap: 3.5rem;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "visual heading"
+    "visual copy";
+  column-gap: 3.5rem;
   align-items: stretch;
 }
 
+/* El wrapper del swipe solo actúa como carrusel en mobile; en desktop es
+   transparente para el layout (display: contents). */
+.specs-swipe {
+  display: contents;
+}
+
+.specs-heading {
+  grid-area: heading;
+}
+
 .specs-copy {
+  grid-area: copy;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 .specs-visual {
+  grid-area: visual;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Aviso de swipe: solo existe en mobile. */
+.specs-swipe-hint {
+  display: none;
 }
 
 /* Carrusel de polaroids apiladas */
@@ -1148,6 +1207,26 @@ p {
   mix-blend-mode: multiply;
 }
 
+/* Cada PNG trae proporciones distintas (pestaña arriba, perfil, etc.):
+   estas escalas igualan la altura del cuerpo de la impresora en las
+   cuatro vistas (cuerpo ≈ 93% del alto de la caja en todas). El orden es
+   el del HTML (no cambia al rotar). */
+.image-card:nth-of-type(1) img {
+  transform: scale(0.96);
+}
+
+.image-card:nth-of-type(2) img {
+  transform: scale(0.93);
+}
+
+.image-card:nth-of-type(3) img {
+  transform: scale(1.08);
+}
+
+.image-card:nth-of-type(4) img {
+  transform: scale(1.04);
+}
+
 /* Carrusel vertical: las fotos se apilan y suben hacia arriba, sin rotación */
 .image-card[data-pos="0"] {
   opacity: 1;
@@ -1158,6 +1237,51 @@ p {
 .image-card[data-pos="2"],
 .image-card[data-pos="3"] {
   opacity: 0;
+}
+
+/* Flechas laterales del carrusel de la impresora: sutiles, con efecto
+   "glass" (vidrio esmerilado) y a la misma distancia de la impresora a
+   ambos lados. */
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 14px rgba(22, 23, 31, 0.08);
+  color: rgba(22, 23, 31, 0.45);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.carousel-arrow:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.85);
+  color: var(--color-text);
+}
+
+.carousel-arrow svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Por fuera de la impresora, con el mismo margen a ambos lados. */
+.carousel-arrow-prev {
+  left: -54px;
+}
+
+.carousel-arrow-next {
+  right: -54px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1172,12 +1296,14 @@ p {
   translate: -70px 0;
 }
 
+.specs-heading .reveal,
 .specs-copy .reveal,
 .specs-copy .reveal-item {
   translate: 70px 0;
 }
 
 .specs-visual.reveal.is-visible,
+.specs-heading .reveal.is-visible,
 .specs-copy .reveal.is-visible,
 .specs-copy .reveal-item.is-visible {
   translate: 0 0;
@@ -1365,17 +1491,106 @@ p {
   font-size: 1.1rem;
 }
 
+/* CTA grande a la izquierda + columnas de navegación a la derecha,
+   como en los footers de landings de producto. */
+.footer-main {
+  display: grid;
+  grid-template-columns: 1.1fr 1.5fr;
+  gap: 3rem;
+  align-items: start;
+}
+
 .footer-cta h2 {
   color: var(--color-on-dark);
 }
 
 .footer-cta p {
   color: var(--color-on-dark-muted);
+  max-width: 34ch;
+}
+
+.footer-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem;
+  /* Alineadas con la base del logo del CTA. */
+  padding-top: 0.5rem;
+}
+
+.footer-col h3 {
+  font-family: "Inter", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 1.1rem;
+}
+
+.footer-col a {
+  display: block;
+  padding: 0.28rem 0;
+  font-family: "Inter", sans-serif;
+  font-size: 0.95rem;
+  color: var(--color-on-dark-muted);
+  transition: color 0.2s ease, translate 0.2s ease;
+}
+
+.footer-col a:hover {
+  color: var(--color-on-dark);
+  translate: 3px 0;
 }
 
 .footer-divider {
   margin-top: 2.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+/* Barra inferior: copyright a la izquierda, "volver arriba" a la derecha. */
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-top: 1.4rem;
+}
+
+.footer-bottom p {
+  font-family: "Inter", sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.footer-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-on-dark);
+}
+
+.footer-top-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.footer-top-arrow svg {
+  width: 15px;
+  height: 15px;
+}
+
+.footer-top:hover .footer-top-arrow {
+  transform: translateY(-3px);
+  background: var(--color-orange);
 }
 
 @media (max-width: 1024px) {
@@ -1385,6 +1600,15 @@ p {
 
   .site-footer {
     padding-top: 4.5rem;
+  }
+
+  .footer-main {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .footer-columns {
+    padding-top: 0;
   }
 
   .paper-shell {
@@ -1397,6 +1621,13 @@ p {
 
   .hero-content {
     padding-bottom: 8rem;
+    /* En pantallas chicas el hero vuelve a su alto compacto: se anulan la
+       bajada del título y la compensación de la impresora del desktop. */
+    translate: 0 0;
+  }
+
+  .product-strip {
+    margin-top: -14rem;
   }
 
   .print-columns {
@@ -1414,15 +1645,20 @@ p {
     grid-template-columns: 1fr;
   }
 
+  /* Specs en una columna: impresora arriba, después título y tabla. */
+  .specs-grid {
+    grid-template-rows: auto;
+    grid-template-areas:
+      "visual"
+      "heading"
+      "copy";
+  }
+
   .paper-copy {
     padding-left: 0;
     padding-top: 2rem;
     border-left: none;
     border-top: 1px solid rgba(22, 23, 31, 0.14);
-  }
-
-  .specs-visual {
-    order: -1;
   }
 }
 
@@ -1454,6 +1690,10 @@ p {
     top: calc(1.5rem + 84px);
     left: 0;
     right: 0;
+    /* Anula el justify-self:end del desktop: en un hijo posicionado de una
+       grilla hace que el panel se encoja a la derecha en vez de ocupar todo
+       el ancho (menú "desbordado"). */
+    justify-self: stretch;
     flex-direction: column;
     align-items: flex-start;
     gap: 0.2rem;
@@ -1507,36 +1747,132 @@ p {
     padding-bottom: 6rem;
   }
 
-  /* Los <br> del copy del hero fuerzan líneas más anchas que la pantalla;
-     en mobile el texto se corta, así que se deja fluir natural. */
-  .hero-text br {
+  /* Hero mínimo: solo título y CTA (la bajada se oculta). */
+  .hero-text {
     display: none;
+  }
+
+  /* CTA más compacto en mobile. */
+  .hero-content .btn {
+    padding: 0.7rem 1.35rem;
+    font-size: 0.95rem;
+  }
+
+  /* La impresora queda pegada al CTA del hero. */
+  .product-strip {
+    margin-top: -11.5rem;
+  }
+
+  /* Impresora grande (135vw + 15% ≈ 155vw): el PNG trae mucho aire
+     transparente a los costados, así que puede exceder el viewport sin
+     que el aparato se corte. */
+  .print-intro-inner {
+    --printer-w: 155vw;
   }
 
   /* En pantallas chicas las polaroids proporcionales a la impresora quedan
      muy chicas para leerse como sección; se les da un tamaño propio. */
   .print-stack {
-    --stack-w: 53vw;
+    --stack-w: 59vw;
   }
 
+  /* ZINK / Bluetooth / Portátil: los tres íconos centrados, uno al lado del
+     otro, debajo de la polaroid. Van apareciendo con cada polaroid que se
+     suma al mazo y se quedan (no se intercambian como en desktop). */
+  .print-features {
+    min-height: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 1.75rem;
+  }
+
+  .print-feature {
+    position: static;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: flex-start;
+    gap: 0.6rem;
+  }
+
+  [data-stage="1"] .print-feature[data-feature="0"],
+  [data-stage="2"] .print-feature[data-feature="0"],
+  [data-stage="3"] .print-feature[data-feature="0"],
+  [data-stage="2"] .print-feature[data-feature="1"],
+  [data-stage="3"] .print-feature[data-feature="1"],
+  [data-stage="3"] .print-feature[data-feature="2"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Despegada de los íconos: sin el solape de -100px del desktop. */
+  .how-it-works {
+    margin-top: 0;
+  }
+
+  /* Los pasos se vuelven un carrusel horizontal: una card entera visible
+     más un pedacito de la siguiente, deslizando con el dedo (scroll-snap,
+     sin JS). */
   .step-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
     gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.25rem 0.25rem 1.25rem;
+    scrollbar-width: none;
+  }
+
+  .step-grid::-webkit-scrollbar {
+    display: none;
   }
 
   .step-card {
-    padding: 1.25rem 1.1rem 1.5rem;
+    flex: 0 0 76%;
+    scroll-snap-align: center;
+    border-radius: 24px;
+    padding: 0.6rem 0.6rem 1.25rem;
+  }
+
+  .step-card h3,
+  .step-card p {
+    padding: 0 0.5rem;
+  }
+
+  .step-photo {
+    height: 210px;
+    border-radius: 18px;
+    margin-bottom: 1rem;
+  }
+
+  .step-meta {
+    padding: 1.1rem 0.5rem 0;
   }
 
   .step-card h3 {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
 
   .step-card p {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
   }
 
-  /* Íconos ZINK / Bluetooth / Portátil: lista vertical, ícono a la izquierda. */
+  .step-time {
+    font-size: 0.78rem;
+  }
+
+  .step-arrow {
+    padding: 0.4rem 1rem;
+  }
+
+  /* Ícono arriba, nombre abajo; la bajada se oculta para que los tres
+     entren cómodos en una sola línea. */
+  .feature-text {
+    flex: none;
+    width: auto;
+  }
+
   .icon-badge {
     width: 60px;
     height: 60px;
@@ -1548,11 +1884,12 @@ p {
   }
 
   .feature-text h3 {
-    font-size: 1.3rem;
+    font-size: 1.05rem;
+    margin-bottom: 0;
   }
 
   .feature-text p {
-    font-size: 1rem;
+    display: none;
   }
 
   /* El papel para cada momento: sin el bloque de color en mobile */
@@ -1562,22 +1899,113 @@ p {
     border-radius: 0;
   }
 
+  /* El papel para cada momento: primero el título y la bajada, después la
+     polaroid, y al final las dos cards lado a lado, compactas tipo botones. */
+  .paper-grid {
+    display: flex;
+    flex-direction: column;
+  }
+
   .paper-copy {
-    border-top: 1px solid var(--color-border);
+    display: contents;
   }
 
-  .paper-copy h2,
-  .paper-copy p {
-    color: var(--color-text);
+  .paper-copy h2 {
+    order: 1;
+    margin-bottom: 0.75rem;
   }
 
   .paper-copy p {
+    order: 2;
     opacity: 1;
     color: var(--color-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .paper-visual {
+    order: 3;
+    justify-content: center;
   }
 
   .paper-cards {
-    flex-direction: column;
+    order: 4;
+    flex-direction: row;
+    gap: 0.9rem;
+    margin-top: 0;
+    padding-top: 1.5rem;
+  }
+
+  .paper-card {
+    min-width: 0;
+    min-height: 0;
+    padding: 0.9rem 1rem 1rem;
+  }
+
+  .paper-card h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0;
+  }
+
+  .paper-card p {
+    display: none;
+  }
+
+  /* Todo en un cuerpo compacto: título arriba y, debajo, un swipe horizontal
+     de dos paneles (impresora → tabla de características). */
+  .specs-grid {
+    display: block;
+  }
+
+  .specs-swipe {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.5rem;
+  }
+
+  .specs-swipe::-webkit-scrollbar {
+    display: none;
+  }
+
+  .specs-swipe .specs-visual,
+  .specs-swipe .specs-copy {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+  }
+
+  .specs-copy {
+    justify-content: flex-start;
+  }
+
+  /* Dentro del swipe la tabla queda fuera de pantalla y el observer de las
+     animaciones de entrada nunca la dispararía: se muestra directo. */
+  .specs-copy .reveal-item {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  .specs-intro {
+    margin-bottom: 0.75rem;
+  }
+
+  /* Aviso de que hay más contenido deslizando. */
+  .specs-swipe-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1.25rem;
+    font-family: "Inter", sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-muted);
+  }
+
+  .specs-swipe-hint svg {
+    width: 18px;
+    height: 18px;
   }
 
   .specs-visual {
@@ -1594,6 +2022,16 @@ p {
     height: 300px;
   }
 
+  /* Menos espacio a los costados: las flechas se acercan para no salirse
+     de la pantalla, siempre sin pisar la impresora. */
+  .carousel-arrow-prev {
+    left: -42px;
+  }
+
+  .carousel-arrow-next {
+    right: -42px;
+  }
+
   /* Specs: imágenes arriba (ya son el primer elemento) */
   .specs-row {
     font-size: 0.95rem;
@@ -1604,16 +2042,29 @@ p {
     display: contents;
   }
 
+  /* Sin el gap de 3rem de la grilla: el espaciado lo dan los márgenes, así
+     el título queda pegado a su bajada. */
+  .colors-grid {
+    gap: 0;
+  }
+
   .colors-copy h2 {
     order: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  /* La bajada va debajo del título, antes de las imágenes. */
+  .colors-copy > p {
+    order: 2;
+    margin-bottom: 1.75rem;
   }
 
   .swatch-grid {
-    order: 2;
+    order: 3;
   }
 
-  .colors-copy p {
-    order: 3;
+  .community-cta {
+    margin-top: 1.75rem;
   }
 
   .community-cta {
@@ -1623,5 +2074,14 @@ p {
   .footer-box {
     margin: 0 10px;
     padding: 2.5rem 1.75rem 2rem;
+  }
+
+  .footer-columns {
+    gap: 1.75rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

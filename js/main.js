@@ -209,7 +209,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // fondo del mazo y la siguiente queda al frente. Sin autoplay: el usuario
   // controla el avance.
   document.querySelectorAll('.stack-carousel').forEach((stack) => {
-    const cards = Array.from(stack.children);
+    // Solo las <figure> son cards: el carrusel puede tener además un hint
+    // ("tocá para girarla") que no forma parte del mazo.
+    const cards = Array.from(stack.children).filter((child) => child.matches('figure'));
     if (cards.length < 2) return;
     let order = cards.map((_, index) => index);
 
@@ -228,7 +230,28 @@ document.addEventListener('DOMContentLoaded', () => {
       order.push(order.shift());
       applyOrder();
     };
+    const retreat = () => {
+      order.unshift(order.pop());
+      applyOrder();
+    };
     stack.addEventListener('click', advance);
+
+    // Flechas laterales opcionales (carrusel de la impresora): avanzan o
+    // retroceden sin disparar además el click general del mazo.
+    const prevBtn = stack.querySelector('[data-carousel-prev]');
+    const nextBtn = stack.querySelector('[data-carousel-next]');
+    if (prevBtn) {
+      prevBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        retreat();
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        advance();
+      });
+    }
     stack.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
